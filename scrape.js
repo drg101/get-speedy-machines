@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import fs from 'fs';
 
 const machinestats_url = 'https://www.cs.colostate.edu/machinestats';
 
@@ -24,11 +25,16 @@ const get_top = async () => {
     return first_n_machines;
 };
 
+const write_machine_list_to_file = (machine_list_json, path) => {
+    const file_contents = machine_list_json.map(node => node.machine).join("\n")
+    fs.writeFileSync(path, file_contents)
+}
+
 (async () => {
     while (true) {
         const top = await get_top();
         const sorted = top.sort((a,b) => (a.cpu + a.memory) - (b.cpu + b.memory));
-        console.log(sorted)
+        write_machine_list_to_file(sorted, '/home/drg101/public_html/good_machines.txt');
         await new Promise(resolve => {
             setTimeout(() => {
                 resolve()
