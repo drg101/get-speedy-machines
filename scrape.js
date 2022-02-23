@@ -48,16 +48,17 @@ blacklist = get_blacklist();
 
 (async () => {
     let times_run = 0;
-    if(times_run % 60 === 0) {
-        console.log("\n=-=-=-=-=-=\n rebuilding blacklist \n=-=-=-=-=-=\n")
-        blacklist = get_blacklist();
-        try {
-            exec('./create_blacklist.sh');
-        }
-        catch {}
-    }
 
     while (true) {
+        if(times_run % 60 === 0) {
+            console.log("\n=-=-=-=-=-=\n rebuilding blacklist \n=-=-=-=-=-=\n")
+            blacklist = get_blacklist();
+            try {
+                exec('./create_blacklist.sh');
+            }
+            catch {}
+        }
+        
         const top = await get_top();
         write_machine_list_to_file(top, './all_machines.txt', true);
         const filtered = top.filter(n => !blacklist.has(n.machine));
